@@ -1,5 +1,7 @@
 # Discord Permission Analyzer
 
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-blue?logo=github)](https://github.com/sponsors/Lukodiablo)
+
 A **dynamic, data-driven tool** that audits your Discord bot's codebase to generate the **exact, minimal permissions** it requires.
 
 > Stop guessing with static permission calculators. This tool **reads your code** and tells you what permissions you're *actually using* — providing a **"single source of truth"** for your bot's security requirements.
@@ -29,14 +31,23 @@ The result? A **definitive, provably accurate list** of permissions your bot nee
 
 ## Features
 
-- **Data-Driven Accuracy**: Permissions generated from the code you've *actually written*.
-- **Principle of Least Privilege**: Build trust by requesting only what's necessary.
-- **Detailed Audit Trail**: Outputs `discord-permissions-report.json` with:
+- **Data-Driven Accuracy**  
+  Permissions generated from the code you've *actually written*.
+
+- **Principle of Least Privilege**  
+  Build trust by requesting only what's necessary.
+
+- **Detailed Audit Trail**  
+  Outputs `discord-permissions-report.json` with:
   - Human-readable permission list
   - Final permission integer
   - **Exact file + line number** where each permission is used
-- **User-Friendly Wrapper**: Includes `run-analyzer.sh` for one-click execution.
-- **CI/CD Friendly**: Easily integrate into your pipeline to detect permission changes on every commit.
+
+- **User-Friendly Wrapper**  
+  Includes `run-analyzer.sh` for one-click execution.
+
+- **CI/CD Friendly**  
+  Easily integrate into your pipeline to detect permission changes on every commit.
 
 ---
 
@@ -48,10 +59,13 @@ The result? A **definitive, provably accurate list** of permissions your bot nee
 - Discord bot project using **discord.js**
 
 ---
+
+### Installation
+
+1. Clone this repository **or** copy the following files into your project:
 scripts/analyze-discord-permissions.js
 run-analyzer.sh
-
-2. Place `analyze-discord-permissions.js` in a `scripts/` directory at your project root.
+text2. Place `analyze-discord-permissions.js` in a `scripts/` directory at your project root.
 
 3. Place `run-analyzer.sh` in your **project root**.
 
@@ -67,6 +81,9 @@ jsconst SCAN_DIRECTORIES = [
   'src/bot/events',
   'src/handlers'
 ];
+
+Adjust paths to match your project structure.
+
 
 Usage
 From your project root, run:
@@ -113,7 +130,7 @@ Exclusion rules for test files
 License
 This project is licensed under the MIT License — see LICENSE for details.
 
-Made with ❤️ for safer, more trusted Discord bots.
-### Installation
 
-1. Clone this repo **or** copy the following files into your project:
+  Made with ❤️ for safer, more trusted Discord bots.
+
+```
