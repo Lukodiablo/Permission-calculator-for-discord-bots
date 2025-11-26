@@ -1,136 +1,115 @@
 # Discord Permission Analyzer
 
-[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-blue?logo=github)](https://github.com/sponsors/Lukodiablo)
+**The only tool that reads your actual code to generate the exact, minimal permissions your bot needs.**
 
-A **dynamic, data-driven tool** that audits your Discord bot's codebase to generate the **exact, minimal permissions** it requires.
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![discord.js](https://img.shields.io/badge/discord.js-v14-5865F2?logo=discord&logoColor=white)](https://discord.js.org)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4)](https://github.com/sponsors/Lukodiablo)
 
-> Stop guessing with static permission calculators. This tool **reads your code** and tells you what permissions you're *actually using* — providing a **"single source of truth"** for your bot's security requirements.
-
----
-
-## The Problem with Manual Calculators
-
-Manually calculating your bot's permissions is **tedious and error-prone**. You either:
-
-1. **Under-permission**: Forgetting a permission → `DiscordAPIError: Missing Permissions` in production.
-2. **Over-permission**: Requesting `Administrator` (or checking every box) "just in case" → **huge security risk** → server owners **refuse to invite your bot**.
-
-This tool **solves that problem by automating the entire process**.
+> No more guessing. No more `Administrator`.  
+> This tool **scans your entire codebase** and tells you — with proof — exactly which Discord permissions your bot actually uses.
 
 ---
 
-## How It Works
+### Why This Exists
 
-The **Permission Analyzer** is a **Node.js script** that performs **static analysis** of your codebase.
+Most bots either:
+- Ask for **way too many permissions** → users don't trust them
+- Forget one permission → crash in production with `Missing Permissions`
 
-It scans your files for **discord.js method calls** gated by permissions (e.g., `.ban()`, `.kick()`, `.setName()`) and generates a **complete, auditable report**.
+Both are unacceptable.
 
-The result? A **definitive, provably accurate list** of permissions your bot needs — **no more, no less**.
-
----
-
-## Features
-
-- **Data-Driven Accuracy**  
-  Permissions generated from the code you've *actually written*.
-
-- **Principle of Least Privilege**  
-  Build trust by requesting only what's necessary.
-
-- **Detailed Audit Trail**  
-  Outputs `discord-permissions-report.json` with:
-  - Human-readable permission list
-  - Final permission integer
-  - **Exact file + line number** where each permission is used
-
-- **User-Friendly Wrapper**  
-  Includes `run-analyzer.sh` for one-click execution.
-
-- **CI/CD Friendly**  
-  Easily integrate into your pipeline to detect permission changes on every commit.
+This analyzer fixes that by **statically analyzing your code** and generating the **perfect permission integer** — backed by file names and line numbers.
 
 ---
 
-## Getting Started
+### Features
 
-### Prerequisites
-
-- Node.js (**v18.x or later** recommended)
-- Discord bot project using **discord.js**
+- Scans **all** `.js/.ts/.jsx/.tsx` files recursively
+- Detects **both explicit** (`.has('BAN_MEMBERS')`) and **inferred** (`.ban()`) permissions
+- Supports **Discord.js naming** → automatically converts to API format
+- Covers **all 50+ current Discord permissions** (up to date as of 2025)
+- Shows **exactly where** each permission is used
+- Generates ready-to-use **bot invite link**
+- Outputs clean console report + full `discord-permissions-report.json`
+- Zero dependencies — just drop in and run
 
 ---
 
-### Installation
-
-1. Clone this repository **or** copy the following files into your project:
-scripts/analyze-discord-permissions.js
-run-analyzer.sh
-text2. Place `analyze-discord-permissions.js` in a `scripts/` directory at your project root.
-
-3. Place `run-analyzer.sh` in your **project root**.
-
-4. Make the script executable:
+### Quick Start
 
 ```bash
-chmod +x run-analyzer.sh
+# 1. Save the script as analyze-discord-permissions.js in your project root
+# 2. Run it
+node analyze-discord-permissions.js
+That’s it.
+You’ll get:
 
-Configuration
-Open scripts/analyze-discord-permissions.js and update the SCAN_DIRECTORIES array to point to your bot's runtime code:
-jsconst SCAN_DIRECTORIES = [
-  'src/bot/commands',
-  'src/bot/events',
-  'src/handlers'
-];
-
-Adjust paths to match your project structure.
-
-
-Usage
-From your project root, run:
-bash./run-analyzer.sh
-The script will:
-
-Scan your codebase
-Generate discord-permissions-report.json in the root directory
+A beautiful terminal summary
+Your exact permission number
+A perfect invite URL
+A full audit trail in JSON
 
 
-Example Report (discord-permissions-report.json)
-json{
-  "timestamp": "2025-11-09T10:56:25.877Z",
-  "permissions": [
-    "BAN_MEMBERS",
-    "KICK_MEMBERS",
-    "MANAGE_THREADS",
-    "SEND_MESSAGES"
-  ],
-  "permissionInteger": "51539603014",
-  "details": [
-    {
-      "permission": "BAN_MEMBERS",
-      "file": "/path/to/your/project/src/bot/commands/ban.ts",
-      "line": 52,
-      "context": ".ban(",
-      "inferred": true
-    }
-  ]
+Example Output
+textUSED PERMISSIONS: 7/52
+
+SEND_MESSAGES
+   Used in 23 place(s) (12 explicit, 11 inferred)
+   • src/commands/ping.ts:15 (inferred)
+   • src/events/messageCreate.ts:42 (explicit)
+
+BAN_MEMBERS
+   Used in 1 place(s) (0 explicit, 1 inferred)
+   • src/commands/ban.ts:38 (inferred)
+
+MANAGE_ROLES
+   Used in 4 place(s)
+   • src/commands/role.ts:102 (inferred)
+
+Permission integer: 140737488355327
+
+UPDATED INVITE URL:
+https://discord.com/api/oauth2/authorize?client_id=1234567890&permissions=140737488355327&scope=bot%20applications.commands
+
+Detailed report saved to: discord-permissions-report.json
+
+Perfect For
+
+Open-source bots that want to earn trust
+Large bots with many commands
+Teams tired of permission bugs
+CI/CD pipelines (fail build if permissions drift!)
+
+
+Installation & Usage
+Just copy this single file into your project:
+analyze-discord-permissions.js (or paste the full script)
+Then run:
+Bashnode analyze-discord-permissions.js
+No config needed — it auto-excludes node_modules, dist, etc.
+Want to run it often? Add to your package.json:
+JSON"scripts": {
+  "permissions": "node analyze-discord-permissions.js"
 }
+Then: npm run permissions
 
 Contributing
-This tool is a work in progress. Contributions are welcome!
-Feel free to:
+Found a missing pattern? New permission added by Discord?
+Pull requests are very welcome!
+Especially needed:
 
-Open an issue to report bugs
-Submit a pull request to add features like:
-Support for other libraries (Eris, discord.py, etc.)
-Advanced pattern matching
-Exclusion rules for test files
-
+Patterns for interaction.reply({ files: [...] })
+Support for discord.js v13/v12
+Auto-updating permission list from Discord API
 
 
-License
-This project is licensed under the MIT License — see LICENSE for details.
+Made With ❤️ For The Discord Community
+Tired of bots asking for Administrator "just in case"?
+So were we.
+Now you can prove — with evidence — that your bot only needs what it uses.
+Invite with confidence. Build with trust.
 
-
-  Made with ❤️ for safer, more trusted Discord bots.
-
-```
+Star this repo if it saved you from another Missing Permissions error
+Made by developers, for developers.
+Always free • Always open source • Always accurate.
